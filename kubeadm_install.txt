@@ -1,0 +1,95 @@
+
+https://computingforgeeks.com/deploy-kubernetes-cluster-on-ubuntu-with-kubeadm/
+
+https://www.golinuxcloud.com/calico-kubernetes/
+
+https://www.weave.works/docs/net/latest/kubernetes/kube-addon/
+
+kubectl -f apply https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+
+
+
+Step=1> Make swap, selinux, firewall disable 
+
+# swapoff -a 
+
+# vim /etc/fstab
+//comment swap line 
+:wq
+
+// To delete swap line in fstab entry 
+
+# sed /swap/d /etc/fstab 
+
+
+# mount -a 
+
+# free -h
+// Disable Firewall 
+
+# ufw status 
+
+# ufw disable 
+
+// Disable Selinux 
+
+# systemctl disable apparmor 
+
+# systemctl stop apparmor 
+
+# systemctl status apparmor 
+
+
+
+# Configure persistent loading of modules
+
+sudo tee /etc/modules-load.d/containerd.conf <<EOF
+overlay
+br_netfilter
+EOF
+
+# Load at runtime
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+# Ensure sysctl params are set
+sudo tee /etc/sysctl.d/kubernetes.conf<<EOF
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+EOF
+
+# Reload configs
+sudo sysctl --system
+
+Step 2: Install kubelet, kubeadm and kubectl
+Once the servers are rebooted, add Kubernetes repository for Ubuntu 20.04 to all the servers.
+
+sudo apt -y install curl apt-transport-https
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list 
+
+Then install required packages.
+
+sudo apt update
+sudo apt -y install vim git curl wget kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+
+Confirm installation by checking the version of kubectl.
+
+$ kubectl version --client && kubeadm version
+
+
+
+Step 5: Initialize master node
+Login to the server to be used as master and make sure that the br_netfilter module is loaded:
+
+$ lsmod | grep br_netfilter
+br_netfilter           22256  0 
+bridge                151336  2 br_netfilter,ebtable_broute
+Enable kubelet service.
+
+# sudo systemctl enable kubelet
+kubeadm join 192.168.56.10:6443 --token vip8hi.uypzpj5vngqa2zda \
+        --discovery-token-ca-cert-hash sha256:f1134cf4bfd1a84a09af6b188dd94790cfee0c081ab43d904457acff8b23028c

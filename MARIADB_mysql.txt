@@ -1,0 +1,300 @@
+MARIADB: 
+========
+
+>> What is MariaDB?
+ 
+ >> MariaDB is a fork of the MySQL database management system. It is created by its original developers.
+ This DBMS tool offers data processing capabilities for both small and enterprise tasks.
+
+>> MariaDB is an improved version of MySQL. It comes with numerous inbuilt powerful features and 
+   many usabilities, security and performance improvements that you cannot find in MySQL.
+   
+   
+>>  MariaDB supports PHP, a popular language for web development.
+ MariaDB can run on different operating systems, and it supports numerous programming languages.
+ MariaDB comes with additional commands that are not available in MySQL.
+ MySQL has features which have a negative impact on the performance of the DBMS.
+ Such features have been replaced in MariaDB.
+ 
+ RDBMS: 
+ =========
+ 
+ >> A relational database management system (RDBMS) is a collection of programs and capabilities that enable IT teams and others to create, update,
+   administer and otherwise interact with a relational database. RDBMSes store data in the form of tables, with most commercial relational database management 
+   systems using Structured Query Language (SQL) to access the database.
+ 
+ 
+ Profile for mariadb: 
+ ====================
+ Packages : mariadb-server , mariadb-client 
+ 
+ service/daemon : mariadb.service 
+ 
+ coniguration file : /etc/my.cnf 
+ 
+ port: 3306
+ 
+ log file for mariadb : /var/log/mariadb/mariadb.log
+ 
+ >> To install mariadb package 
+ 
+  # yum list all | grep mariadb 
+ 
+ # yum install mariadb-server mariadb-client -y (or) yum install mariadb* -y 
+ 
+ >> To start daemon for mariadb 
+ ================================
+ 
+ # systemctl enable  --now mariadb ; systemctl status mariadb
+ 
+ 
+ >> To set db root user password :
+ 
+ # mysql_secure_installation
+
+   > (press enter)
+   
+   >y
+    passwd:.....
+	passwd: ....
+	
+	> y
+	
+	> y
+	
+	> y
+	
+	> y
+	
+	
+ >> To login into mariadb database :
+ 
+   # mysql -u root -p    /// (Good@2021)
+   
+   // to list databases 
+   
+    > show databases ;
+	
+	// to list tables inside a database ; 
+	
+	> show tables from mysql ;
+
+        
+	// to list content of tables 
+	
+	> select * from mysql.user ;
+	
+	// To go inside a database ;
+	
+	> use mysql ;
+	
+	// To create a new database 
+	
+	> create database test_db ; 
+	
+	> use test_db	 
+       
+       // to create  table 
+
+	>create table student (name varchar(20),Reg_No int(10),Age int(3))	
+	
+	// To check table 
+
+        > show tables ;
+	
+	> desc student ;
+	
+       // To add new column in exsting table 
+
+        
+       > alter table student add gender varchar(5);
+      
+	// insert data into the  table ;
+	
+	> insert into student values ("Kalia",10100002,30,"Male");
+
+       // To check The table content .
+
+       > select * from student ; 
+
+       // To update table 
+      
+		> update  employee set emp_id='12348' where age='26' ; /// format follow like this 
+      
+       > select * from student where Reg_No=10100002;
+
+       // To delete row from a table in database 
+
+       > delete from student where Reg_No=10100002;
+
+       > select * from student;
+
+       // To delete column from a table
+
+	   > alter table <table_name> drop column <column_name> ;   
+
+     -------------------------------------------------------
+
+       > // To create local user in database 
+
+      > create user kalia@"localhost" identified by "redhat" ;
+
+      // To create remote database user 
+
+      > create user balia@"%" identified by "redhat1" ;
+
+     // To check  db user created or not 
+
+     > select * from mysql.user ; 
+
+     > select user,host from mysql.user ;
+
+    // Now to check test_db database access is there or not for kalia and balia user . 
+
+
+     > bye (exit from root login) 
+
+     # mysql -u kalia -p 
+
+     > show databases ;
+
+     > bye 
+
+     # mysql -u balia -p 
+	
+     > show databases ;   // (Though we have not given access to kalia and balia , so they can not see test_db database )
+
+
+     // set permission/privilege to database user  
+
+    > grant select,insert,update on test_db.* to kalia@'localhost';
+
+    > grant all on test_db.* to balia@"%"; 
+
+     // To update grant access . 
+
+    > flush privileges ; 
+
+   
+     // to list permission for a user on database 
+
+    > show grants for kalia@'localhost'; 
+
+  
+   > show grants for balia@'%' ; 
+
+    // try to login in db using local user .
+
+
+  // To revoke privilages from a database to a user . 
+  
+    # REVOKE INSERT ON student.* FROM 'kalia'@'localhost';
+
+ 
+   # mysql -u kalia -p 
+
+   > show databases ; 
+
+   > use test_db ;
+
+   >  select * from student ;
+
+
+ // Similarly try to check for balia user .
+   
+
+
+ // To check access from remotely  to database 
+
+
+  // In remote machine 
+
+
+ # yum install epel-release -y 
+
+
+  # yum install mariadb -y 
+
+ # mysql -u balia -p -h 172.16.16.100 
+
+ 
+// To block remotely access database 
+
+
+// Login to db root server.
+
+ # vim  /etc/my.cnf 
+
+ add in last line 
+ 
+skip-networking=1   // to add mysql line 
+
+:wq
+
+
+ # systemctl restart mariadb 
+
+ // Now again go to remote machine and try to check user can not access db .
+
+
+ # mysql -u balia -p -h 172.16.16.100 
+
+
+>> How to take database backup "mysqldump" command is used .
+
+
+ # mysqldump -u root -p test_db > /tmp/test_db.bkp 
+
+
+
+ // To login as root and delete that database 
+
+# mysql -u root -p 
+
+> show databases ;
+
+> use test_db ;
+
+> show tables ;
+
+> drop table student ;
+
+ > drop database test_db ;
+
+> create database New_db ;
+
+
+> bye 
+
+
+// Now lets restore the db backup .
+
+
+# mysql -u root -p New_db < /tmp/test_db.bkp 
+
+// Now check all the db content is there or not .
+
+# mysql -u root -p 
+
+> show databases ;
+
+
+ > use New_db ;
+
+ > show tables ;
+
+
+ > select * from student ;
+
+
+// To delete table and database "drop" query is used .
+
+
+ > drop database <database_name> 
+ 
+ > drop table <table_name> 
+ 
+########## Goodbye Enjoy .. ######## 
+
+
+

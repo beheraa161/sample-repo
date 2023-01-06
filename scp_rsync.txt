@@ -1,0 +1,52 @@
+What is the difference between scp and rsync ? 
+
+SCP(Secure Copy) >> 
+====================
+ >> The major difference between these tools is how they copy files.
+
+>>  scp basically reads the source file and writes it to the destination. 
+   It performs a plain linear copy, locally, or over a network.
+   scp simply overwrites the files in the destination, if they already exist.
+
+example: 
+-------
+
+  >> To copy local system files/dirs to remote system .
+
+   # scp --help 
+
+   # scp -av <source_file_path> <username>@<ip/hostnmame>:/<dest_path> 
+
+
+   >> To copy from remote system to local system 
+
+   # scp -av  <username>@<ip/hostnmame>:/<source_file_path>  <local_dest_file_path>  
+
+rsync(Remote Synchronisation) >>
+============================
+
+>>  rsync also copies files locally or over a network.
+    Whereas, rsync, skips the files which are already available in the destination.
+
+ >> To copy local system files/dirs to remote system .
+
+   # rsync --help 
+
+   # rsync -av <source_file_path> <username>@<ip/hostnmame>:/<dest_path> 
+
+
+   >> To copy from remote system to local system 
+
+   # rsync -av  <username>@<ip/hostnmame>:/<source_file_path>  <local_dest_path>  
+
+
+
+########################################################
+
+What is soft lik and hard link file ? 
+
+Soft Link:
+----------
+
+>> 
+

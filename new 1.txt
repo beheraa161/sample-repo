@@ -1,0 +1,9 @@
+
+
+
+   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
+   
+   
+    https://manoj-86:{{ password }}@github.com/manoj-86/test.git
+	
+	https://kmr-sambeet90:{{ password }}@github.com/kmr-sambeet90/Personal-repo.git

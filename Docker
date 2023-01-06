@@ -1,0 +1,429 @@
+
+
+what is docker ? 
+
+Ans:> Docker is an open source containerization platform. 
+It enables developers to package applications into containers .  
+    > Docker is written in the Go programming language and takes advantage of several features of
+	the Linux kernel to deliver its functionality. 	
+	
+	
+Docker architecture ? 
+ 
+ >> Docker uses a client-server architecture. The Docker client talks to the Docker daemon, which does the heavy 
+   lifting of building, running, and distributing your Docker containers. The Docker client and daemon can run on the same system, 
+   or you can connect a Docker client to a remote Docker daemon. The Docker client and daemon communicate using a REST API, over UNIX sockets or a network interface.
+   Another Docker client is Docker Compose, that lets you work with applications consisting of a set of containers.
+ 
+What is docker image ? 
+Ans: An image is a read-only template with instructions for creating a Docker container.  
+  
+  
+what docker container ? 
+Ans: A container is a running instance of an image.
+
+Docker Features:-
+Easy and Faster Configuration
+Increase productivity
+Application Isolation
+Swarm
+Routing Mesh
+Services
+Security Management
+
+what is the differentce between containerization vs virtualization . 
+
+>> https://www.baeldung.com/cs/virtualization-vs-containerization#:~:text=Virtualization%20and%20containerization%20are%20the,the%20concept%20of%20a%20container.
+
+
+
+4> How to install docker in linux ?
+
+Install docker in centos 7:-
+# yum install epel-release -y
+# yum install -y yum-utils
+# yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+# yum install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
+#	
+# systemctl enable --now docker
+# systemctl status  docker
+# ls -l /var/run/docker.sock
+# chmod 777 /var/run/docker.sock
+# ls -l /var/run/docker.sock
+# usermod -aG docker root
+# docker version
+# docker info
+# docker pull tomcat    // To pull tomcat image from  the docker hub.
+# docker pull nginx    // To pull an image from the docker hub
+# docker images       // To check all images
+# docker image ls     // to check the images 
+# cd /var/lib/docker/image/overlay2    // Images stored in this location
+# cat repositories.json
+# docker run -dt tomcat  // To run a container
+# docker ps -a     // To check all container
+# docker ps       // To check running container
+
+[9:05 AM, 5/21/2022] Monaj Bhai Bdk: >> when we run a container , we need to decide whether we have to run it in attch(forgroundmode) or dettach(backgroundmode) .
+
+>> To run a container with attach mode .
+    
+ >> # docker pull nginx 
+ 
+ >> # docker images 
+	
+>>  # docker run --name my_attach -p 8080:80 nginx // it will run in fourground and try access in browser logs will generate 
+
+
+>> To run a container with attach mode .
+
+   # docker run -d --name my_dettach -p 8081:80 nginx // To run docker background 
+   
+   # docker ps 
+   
+   
+   >> To stop container 
+   
+     # docker container stop <con_name/con_id>
+
+
+    >> To stop all the container 
+	
+     # docker container stop $(docker container ls -aq) 
+
+     
+    >> To remove a specific container 
+
+     # docker container rm <con_name/con_id>
+
+    >> To remove all container at a time .
+
+     # docker container rm $(docker container ls -aq)
+
+   >> To remove a docker image 
+
+     # docker images 
+	  
+	 # docker image ls -a 
+	 
+	 # docker rmi <image_name/image_id> 
+	 
+	 # docker rmi -f <image_name/image_id>
+	 
+	>> To remove all docker image at a time
+	 
+	 # docker rmi -f ${docker images -aq}
+
+    >> To clean the docker environment, removing all the containers and images.
+	
+
+    # docker system prune -a 	 
+
+
+ https://ibm-learning.udemy.com/course/docker-certified-associate/learn/lecture/13461058#overview
+ 
+  >> docker container exec :
+  
+   > The docker container exec command runs a new command in a running container .
+   > This command started using docker exec only run while the container's primary process (PID1) is running .
+   
+   # docker run -d --name docker-exec  nginx 
+   
+   # docker ps 
+   
+   # docker container exec -it docker-exec bash 
+
+   # /etc/init.d/nginx status 
+
+   # cd /bin
+   # ls -l 
+
+   # apt-get update 
+
+   # apt-get install net-tools 
+
+   # netstat -ntlp 
+
+   # which netstat 
+
+   #exit 
+
+   # docker ps 
+
+   >> whitout login to the container how to run the command 
+
+   # docker container exec -it docker-exec netstat -ntlp 
+
+   >> to stop the container inside it 
+
+   # docker container exec -it docker-exec bash 
+
+   # /etc/init.d/nginx stop // It will stop the container 
+   
+   # docker ps --all 
+   
+   # docker ps -a 
+   
+   # docker container start docker-exec 
+   
+   # docker run -dt --name mybusybox  busybox 
+   
+   # docker exec -it mybusybox bash // getting error as bash program is not there 
+   
+   # docker exec -it mybusybox sh 
+   
+   >> Importance of IT flag 
+   
+   > Any process that we create in linux env, has three open file descripter, such as stdin, stdout, stderr .
+   
+   # docker exec docker-exec bash  // it will come out as we have not provide i flag 
+   
+   # docker exec -i docker-exec bash // it will not give prompt 
+   
+    ls 
+	pwd
+   
+   # docker exec -it docker-exec bash 
+   
+   #tty // to check terminal type 
+   
+   # exit
+   
+   # docker exec -t docker-exec bash
+   
+   # ls  // here you will not get output  becz i flag not given
+
+  
+  ------------------------------------------------
+  
+  ######Or ####################################
+  
+  # yum install epel-release -y 
+  #  curl -fsSL https://get.docker.com/ | sh 
+  
+Docker Volume : 
+===============
+>>> Volumes are the preferred mechanism for persisting data generated by and used by Docker containers. 
+   While bind mounts are dependent on the directory structure and OS of the host machine, 
+   volumes are completely managed by Docker. Volumes have several advantages over bind mounts:
+
+*> Volumes are easier to back up or migrate than bind mounts.
+*> You can manage volumes using Docker CLI commands or the Docker API.
+*> Volumes work on both Linux and Windows containers.
+*> Volumes can be more safely shared among multiple containers.
+*> Volume drivers let you store volumes on remote hosts or cloud providers, to encrypt the contents of volumes, or to add other functionality.
+*> New volumes can have their content pre-populated by a container.
+
+>> Choose the -v or --mount flag
+
+ > In general, --mount is more explicit and verbose. 
+
+ > The biggest difference is that the -v syntax combines all the options together in one field, 
+   while the --mount syntax separates them.
+  
+>>> There are three types of volume mount in docker  such as 
+ 
+   1> Volume Mount -> It will mount the container in docker area in docker host such as "/var/lib/docker/volume/"
+   
+   2> Bind Mount : It will mount that container in docker host filesystem Area .
+   
+   3> tmpfs Mount : It will mount the container in docker host memory Area .
+  
+  
+ Create and manage volumes: 
+ ---------------------------
+Unlike a bind mount, you can create and manage volumes outside the scope of any container.
+ 
+ Create a volume:
+
+ # docker volume --help 
+ 
+ # docker volume create my-vol 
+
+ # docker volume ls  // To check volume  
+ 
+ # docker volume inspect my-vol // Display detailed information about volume 
+ 
+ # docker run -d --name con1 -P -v my-vol:/app nginx // To mount a volume with docker container 
+ 
+ # docker exec -it con1 bash 
+ 
+ # cd /app
+ # touch file{1..10}
+ # ls -l 
+ 
+ # exit 
+ 
+ Now lets check the data in docker host  . 
+ 
+ # cd /var/lib/docker/volumes/my-vol/_data/ 
+ # ls -l  // Here we can get  all the data 
+
+
+// Now let us delete the container but still the data will be there in docker host 
+
+ # docker rm  -f  con1 
+ 
+  # cd /var/lib/docker/volume/_data 
+  # ls 
+  
+ // Now let us create one more container and mount same volume 
+ 
+ # docker run  -d --name con2 -P --mount source=my-vol,target=/app nginx 
+ 
+ # docker exec -it con2 bash 
+ 
+ # ls -l  /app
+ 
+ # touch /app/myfile{1..5} 
+ 
+ # ls -l /app 
+ 
+ # exit 
+ 
+ # cd /var/lib/docker/volume/my-vol/_data 
+ 
+ # ls  -l // Now you get new data also 
+
+ // Now let us create a  bind mount by create a directory in docker host machine 
+
+  # mkdir /opt/data 
+
+  # docker run -d --name con3 -P --mount type=bind,source=/opt/data,target=/app nginx 
+  
+  # docker exec -it con3 bash 
+  
+  # cd /app 
+  # touch myfile{1..10}
+  
+  # ls -l 
+  
+  # exit 
+  
+  # cd /opt/data 
+  # ls  -l  // Now you can find container data on it 
+  
+ >> Another way to use bind mount . 
+  
+  # mkdir target 
+  # docker run -d -it --name devtest -v "$(pwd)"/target:/app nginx 
+  
+  
+ // Now lets create a tmpfs mount with a container . 
+  
+   # docker run  -d  --name con5 -P --mount type=tmpfs,destination=/app nginx // Here source is not required 
+                                                                              as it will store data in memory .
+  
+   # docker run -d -it --name tmptest --tmpfs /app  nginx:latest // Anather way to mount tmpfs with a container 
+   
+   
+   
+ >> Docker storage drivers : 
+ ---------------------------
+ 
+>> The storage driver controls how images and containers are stored and managed on your Docker host . 
+
+>> Docker uses storage drivers to store image layers, and to store data in the writable layer of a container .
+
+>> A storage driver handles the details about the way these layers interact with each other. 
+Different storage drivers are available, which have advantages and disadvantages in different situations.
+
+>> Container and layers: 
+
+>> The major difference between a container and an image is the top writable layer. 
+All writes to the container that add new or modify existing data are stored in this writable layer.
+When the container is deleted, the writable layer is also deleted.
+
+    
+ 
+>> The Docker Engine provides the following storage drivers on Linux: 
+ 
+1> overlay2 : overlay2 is the preferred storage driver for all currently supported Linux distributions, 
+              and requires no extra configuration.
+			  
+2> fuse-overlayfs: fuse-overlayfsis preferred only for running Rootless Docker on a host that does not provide support for rootless overlay2. 
+                   On Ubuntu and Debian 10, the fuse-overlayfs driver does not need to be used, 
+				   and overlay2 works even in rootless mode. Refer to the rootless mode documentation 
+				   for details .
+
+3> btrfs and zfs: The btrfs and zfs storage drivers allow for advanced options, such as creating “snapshots”,
+                  but require more maintenance and setup. Each of these relies on the backing filesystem being 
+				  configured correctly. 
+
+4> vfs : The vfs storage driver is intended for testing purposes, and for situations where no copy-on-write filesystem can be used. Performance of this storage driver is poor, and is not generally recommended for production use.  	
+
+5> aufs: The aufs storage driver Was the preferred storage driver for Docker 18.06 and older,
+         when running on Ubuntu 14.04 on kernel 3.13 which had no support for overlay2. 
+		 However, current versions of Ubuntu and Debian now have support for overlay2, which is now the recommended driver.
+
+6> devicemapper: The devicemapper storage driver requires direct-lvm for production environments, 
+                 because loopback-lvm, while zero-configuration, has very poor performance. 
+				 devicemapper was the recommended storage driver for CentOS and RHEL, 
+				 as their kernel version did not support overlay2. 
+				 However, current versions of CentOS and RHEL now have support for overlay2, 
+				 which is now the recommended driver.
+	
+
+
+7> overlay: The legacy overlay driver was used for kernels that did not support the “multiple-lowerdir” 
+            feature required for overlay2 All currently supported Linux distributions now provide support 
+			for this, and it is therefore deprecated .
+			
+			
+ 
+Storage driver	          Supported backing filesystems
+--------------            -----------------------------
+overlay2, overlay	       xfs with ftype=1, ext4
+fuse-overlayfs	            any filesystem
+aufs	                    xfs, ext4
+devicemapper	            direct-lvm
+btrfs	                    btrfs
+zfs	                        zfs
+vfs	                        any filesystem
+
+
+
+
+ >> To check  which store driver we are using 
+ 
+ # docker  info | grep -i driver 
+ 
+ 
+ // Now let us  change the store driver in docker 
+ 
+>> Stop Docker.
+
+ # systemctl stop docker
+
+>> Edit /etc/docker/daemon.json. If it does not yet exist, create it. 
+   Assuming that the file was empty, add the following contents.
+
+# vim /etc/docker/daemon.json 
+{
+  "storage-driver": "devicemapper"
+}
+
+# systemctl start  docker 
+
+# docker  info  | grep  -i driver // Now check storage driver changed 
+
+// run a docker container 
+
+# docker run -d -it --name con12 -P nginx 
+
+# docker container inspect con12 | grep -i driver 
+
+// Now Again change the docker storage driver to overley2 
+
+# systemctl stop docker 
+
+# vim /etc/docker/daemon.json 
+{
+  "storage-driver": "overlay2"
+}
+
+# systemctl start docker  
+
+// Now again check the docker storage driver 
+
+# docker info | grep -i driver  // it should be overlay2 
+

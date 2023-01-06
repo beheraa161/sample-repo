@@ -1,0 +1,327 @@
+VSFTPD: (Very Secure File Transfor Protocol) :
+----------------------------------------------
+
+>> FTP stands for File Transfer Protocol. It has been a standard method for transferring files between computers .
+
+Profile for vsftpd :
+====================
+>> Package Name : vsftpd
+
+>> Service/Daemon : vsftpd 
+
+>> Configuration file : /etc/vsftpd/vsftpd.conf 
+
+>> Port number : 20 (Data Tranfer) , 21 (For Communication)
+
+>> User List config file : /etc/vsftpd/user_list 
+
+
+Step 1: Install FTP Service with VSFTPD
+
+1. Start by updating the package manager: 
+
+ # yum install epel-release -y ; yum update -y 
+ 
+2. Install VSFTPD software with the following command: 
+ 
+ # yum install vsftpd -y ; 
+ 
+ 3. . Start the service and set it to launch when the system boots with the following:
+ 
+  # systemctl enable vsftpd  ; systemctl start vsftpd  ; systemctl status vsftpd 
+  
+ 4. Next, create a rule for your firewall to allow FTP traffic on Port 21:
+
+  # firewall-cmd --zone=public --permanent --add-port=21/tcp
+
+  # firewall-cmd --zone=public --permanent --add-service=ftp
+
+  # firewall-cmd –-reload
+
+Note: If you use a different firewall application, refer to the documentation to configure it correctly for Port 21.
+      Also, some FTP clients use Port 20, so you may wish to include that rule as well. 
+      Simply copy the first line, and replace 21 with 20.
+ 
+ Step 2: Configuring VSFTPD
+
+ The behavior of the FTP service on your server is determined by the /etc/vsftpd/vsftpd.conf configuration file.
+
+1. Before starting, create a copy of the backup configuration file:
+
+# cp /etc/vsftpd/vsftpd.conf /etc/vsftpd/vsftpd.conf.backup
+
+  
+  This ensures that you have a way to return to the backup configuration, in case you change a setting that may cause issues.
+
+2. Next, edit the configuration file with the following command:
+
+ # vim /etc/vsftpd/vsftpd.conf
+	
+3. Set your FTP server to disable anonymous users and allow local users.
+
+ Find the following entries in the configuration file, and edit them to match the following:
+
+anonymous_enable=NO
+
+local_enable=YES
+
+ This is an important step. Anonymous access is a risky – you should avoid it unless you understand the risks.
+
+4. Next, allow a logged-in user to upload files to your FTP server.
+
+Find the following entry, and edit to match as follows:
+
+write_enable=YES
+
+Note: By default, this line starts with a # sign to indicate it’s a comment. Commenting is a useful way to turn commands on and off.
+
+ The # sign can also be used to make notes in the file without the system interpreting them as instructions.
+ 
+ 5. Limit FTP users to their own home directory. This is often called jail or chroot jail. Find and adjust the entry to match the following:
+
+chroot_local_user=YES
+
+allow_writeable_chroot=YES
+
+Note: for test purposes, the allow_writeable_chroot=YES option will create a functioning FTP server that you can test and use.
+ Some administrators advocate the use of the user_sub_token option for better security.
+
+Refer to the vsftpd documentation for more information on this option.
+
+
+Home » SysAdmin » How To Install an FTP Server on CentOS 7 With VSFTPD
+
+Introduction
+
+If you are looking to install an FTP server, you can’t beat the simplicity of VSFTPD.
+
+>> FTP stands for File Transfer Protocol. It has been a standard method for transferring files between computers for decades.
+
+ >> Although security measures have been added, FTP is by nature an insecure method for transferring files.
+ However, it can be useful when making files available to multiple users, or when working in a secure and private network.
+
+ >> This guide will show you how to configure and install an FTP server using VSFTPD on CentOS 7.
+
+ Installing FTP on CentOS tutorial
+
+
+Prerequisites
+
+ Access to a user account with sudo privileges
+ The yum package manager, installed by default
+ A text editor of your choice
+ Install FTP Server on CentOS 7
+
+
+Step 1: Install FTP Service with VSFTPD
+
+1. Start by updating the package manager:
+
+sudo yum install epel-release 
+
+Allow the process to complete.
+
+ >> This guide uses the VSFTPD (VSFTPD stands for “Very Secure FTP Daemon software package”).
+ It’s a relatively easy software utility to use for creating an FTP server.
+
+2. Install VSFTPD software with the following command:
+
+ # yum install vsftpd -y
+
+When prompted, type Y to allow the operation to complete.
+
+Terminal command to install vsftpd on CentOS.
+
+3. Start the service and set it to launch when the system boots with the following:
+
+ # systemctl start vsftpd
+
+ # systemctl enable vsftpd
+
+ This image shows how to start and enable the vsftpd service upon install.
+
+4. Next, create a rule for your firewall to allow FTP traffic on Port 21:
+
+ # firewall-cmd --zone=public --permanent --add-port=21/tcp
+
+ # firewall-cmd --zone=public --permanent --add-service=ftp
+
+ # firewall-cmd –-reload
+
+>> Once vsftpd is installed, configure the firewall to allow traffic on Port 21.
+>> Note: If you use a different firewall application, refer to the documentation to configure it correctly for Port 21.
+   Also, some FTP clients use Port 20, so you may wish to include that rule as well.
+   Simply copy the first line, and replace 21 with 20.
+
+Step 2: Configuring VSFTPD
+
+The behavior of the FTP service on your server is determined by the /etc/vsftpd/vsftpd.conf configuration file.
+
+1. Before starting, create a copy of the default configuration file:
+
+ # cp /etc/vsftpd/vsftpd.conf /etc/vsftpd/vsftpd.conf.backup
+
+This ensures that you have a way to return to the backup configuration, in case you change a setting that may cause issues.
+
+2. Next, edit the configuration file with the following command:
+
+ # vim  /etc/vsftpd/vsftpd.conf
+
+
+anonymous_enable=NO
+
+local_enable=YES
+
+
+write_enable=YES
+
+
+chroot_local_user=YES
+
+allow_writeable_chroot=YES
+
+
+userlist_enable=YES
+
+userlist_file=/etc/vsftpd/user_list
+
+userlist_deny=NO
+
+	:wq
+
+
+# systemctl restart vsftpd ; systemctl status vsftpd 
+
+
+####################################
+
+3. Set your FTP server to disable anonymous users and allow local users.
+
+Find the following entries in the configuration file, and edit them to match the following:
+
+The configuration file options in this image enhance vsftpd security on your server.
+This is an important step. Anonymous access is a risky – you should avoid it unless you understand the risks.
+
+4. Next, allow a logged-in user to upload files to your FTP server.
+
+Find the following entry, and edit to match as follows:
+
+Note: By default, this line starts with a # sign to indicate it’s a comment. Commenting is a useful way to turn commands on and off. 
+The # sign can also be used to make notes in the file without the system interpreting them as instructions.
+
+5. Limit FTP users to their own home directory. This is often called jail or chroot jail. Find and adjust the entry to match the following:
+
+Note: for test purposes, the allow_writeable_chroot=YES option will create a functioning FTP server that you can test and use.
+ Some administrators advocate the use of the user_sub_token option for better security.
+
+Refer to the vsftpd documentation for more information on this option.
+
+6.The vsftpd utility provides a way to create an approved user list. To manage users this way, find the userlist_enable entry,
+ then edit the file to look as follows:
+
+You can now edit the /etc/vsftpd/user_list file, and add your list of users. (List one per line.) 
+The userlist_deny option lets you specify users to be included; setting it to yes would change the list to users that are blocked.
+
+7. Once you’re finished editing the configuration file, save your changes. Restart the vsftpd service to apply changes:
+
+
+####################################
+ 
+ Step 3: Create a New FTP User
+1. To create a new FTP user enter the following:
+
+ # adduser testuser
+
+ # passwd testuser
+
+The system should prompt you to enter and confirm a password for the new user.
+
+2. Add the new user to the userlist:
+
+ # echo “testuser” | sudo tee –a /etc/vsftpd/user_listcp /etc/vsftpd/vsftpd.conf /etc/vsftpd/vsftpd.conf.backup
+
+3. Create a directory for the new user, and adjust permissions:
+
+ # mkdir –p /home/testuser/ftp/upload
+ # chmod 550 /home/testuser/ftp
+ # chmod 750 /home/testuser/ftp/upload
+ # chown –R testuser: /home/testuser/ftp
+ 
+4. Now, you can log in to your FTP server with the user you created:
+
+# ftp <Server_ip>  // It will ask username and password , give accordingly here in this example testuser 
+
+Replace this IP address with the one from your system.
+
+>ls -l 
+
+> pwd 
+
+> cd ftp/upload 
+
+> pwd
+
+> ls -ltr
+
+>!ls -l 
+
+> put <file_name> // To upload one file 
+
+> mput file1 file2 // to upload multiple file 
+
+> get file_name // to download one file 
+
+> mget file1 file2  // To download multiple files at a time 
+
+
+// Go to client machine and test 
+
+# ftp <Server_ip>  // It will ask username and password , give accordingly here in this example testuser 
+
+
+>ls -l 
+
+> pwd 
+
+> cd ftp/upload 
+
+> pwd
+
+> ls -ltr
+
+>!ls -l 
+
+> put <file_name> // To upload one file 
+
+> mput file1 file2 // to upload multiple file 
+
+> get file_name // to download one file 
+
+> mget file1 file2  // To download multiple files at a time 
+
+
+Thanks you and Enjoy ...
+
+
+Q> what is the difference betweenh the NFS and FTP?
+
+The difference between NFS and FTP -
+NFS-
+1- NFS stands for network file system
+2- It is use to share file over the network (within
+linux os)
+3- Its port no. is 2049
+
+FTP-
+1-FTP stands for file transfer protocol.
+2-It is use to share file over the network it mean
+you can acess by windows cmd prompt and in linux both.
+3- Its port no. is 20 and 21
+
+Note: 20 for transfer data
+      21 for provide flow control
+
+
+
+
+
